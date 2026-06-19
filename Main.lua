@@ -304,6 +304,14 @@ function Main(isReplay)
         SetTextAndRecord(W.valHP, string.format("%d", totalHP), C.HP)
         SetTextAndRecord(W.valShield, string.format("%d", totalShield), C.SHIELD)
 
+        local showMass = OPT.showMass()
+        local showEnergy = OPT.showEnergy()
+        local showBuildpower = OPT.showBuildpower()
+        S.showColA = false
+        if showMass and massRate ~= 0 then S.showColA = true end
+        if showEnergy and energyRate ~= 0 then S.showColA = true end
+        if showBuildpower and totalbr ~= 0 then S.showColA = true end
+
         -- The reclaim row only appears when the total is > 0. That total is
         -- computed here on the ticker, so when it crosses 0 mid-selection we
         -- need to relayout to add/remove the row (only then, not every tick).
@@ -359,13 +367,17 @@ function Main(isReplay)
 
         local showCat = OPT.showCategories()
 
-        -- Column A (left): Resources, then Buildpower
+        -- Column A (left): Resources + Buildpower. Hide completely if active values are all zero.
         local colA = {}
-        if showCat and (OPT.showMass() or OPT.showEnergy()) then table.insert(colA, { kind = 'h', ctrl = W.hdrResources }) end
-        if OPT.showMass() then table.insert(colA, { kind = 'v', ctrl = W.valMass }) end
-        if OPT.showEnergy() then table.insert(colA, { kind = 'v', ctrl = W.valEnergy }) end
-        if showCat and OPT.showBuildpower() then table.insert(colA, { kind = 'h', ctrl = W.hdrBuildpower }) end
-        if OPT.showBuildpower() then table.insert(colA, { kind = 'v', ctrl = W.valBuildpower }) end
+        if S.showColA then
+            if showCat and (OPT.showMass() or OPT.showEnergy()) then table.insert(colA,
+                    { kind = 'h', ctrl = W.hdrResources })
+            end
+            if OPT.showMass() then table.insert(colA, { kind = 'v', ctrl = W.valMass }) end
+            if OPT.showEnergy() then table.insert(colA, { kind = 'v', ctrl = W.valEnergy }) end
+            if showCat and OPT.showBuildpower() then table.insert(colA, { kind = 'h', ctrl = W.hdrBuildpower }) end
+            if OPT.showBuildpower() then table.insert(colA, { kind = 'v', ctrl = W.valBuildpower }) end
+        end
 
         -- Column B (middle): Cost, then Mass killed
         local colB = {}
