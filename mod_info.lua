@@ -1,5 +1,5 @@
-name = "Selection Info"
-version = 4
+name = "DynamicSelectionInfo"
+version = 1
 copyright = ""
 description = [[Displays info about the selected units:
 Resources: Energy, Mass
@@ -12,10 +12,10 @@ ACU and SACU always show their base DPS.
 Each number can be toggled on/off, and the category names can be hidden, in
 Options > ReUI options > Selection Info.
 Drag with the middle mouse button. Required mod: ReUI]]
-author = "Nuggets"
+author = "Nuggets HotCheese"
 url = ""
-icon = "/mods/SelectionInfo/icon.png"
-uid = "selection-info-v04"
+icon = "/mods/SelectionInfo/iconmerge.png"
+uid = "dynamic-selection-info-v01"
 selectable = true
 enabled = true
 exclusive = false
