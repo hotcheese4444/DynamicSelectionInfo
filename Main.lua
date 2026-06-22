@@ -19,7 +19,7 @@ function Main(isReplay)
     local GameMain         = import('/lua/ui/game/gamemain.lua')
     local ObserveSelection = GameMain.ObserveSelection
 
-    local OPT = ReUI.Options.Mods["SelectionInfo"]
+    local OPT = ReUI.Options.Mods["DynamicSelectionInfo"]
 
     -- Colors (each number is identified by color since labels are gone)
     local C = {
@@ -591,7 +591,7 @@ function Main(isReplay)
         -- Instant update on selection change (recomputes static DPS; empty -> hide)
         ObserveSelection:AddObserver(function(info)
             OnSelection(info.newSelection)
-        end, "SelectionInfo")
+        end, "DynamicSelectionInfo")
 
         -- Live refresh of dynamic values while selected; idle when none.
         -- No relayout and no DPS recompute here.
