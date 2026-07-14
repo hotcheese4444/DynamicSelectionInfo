@@ -11,14 +11,15 @@ Combat stats: DPS, HP, Shield (off by default)
 Mass reclaimed (only works for engineers) -> shows when above 0
 ACU and SACU always show their base DPS.
 Options > ReUI options > Selection Info.
+Fix to show DPS accuractly for rack/salvo firing weapons
 Drag with the middle mouse button. Required mod: ReUI]]
 author = "Nuggets HotCheese"
 url = ""
 icon = "/mods/DynamicSelectionInfo/iconmerge.png"
-uid = "dynamic-selection-info-v01"
+uid = "dynamic-selection-info-v02"
 selectable = true
 enabled = true
 exclusive = false
 ui_only = true
 
-ReUI = 'DynamicSelectionInfo=1.0.0'
+ReUI = 'DynamicSelectionInfo=1.1.0'
