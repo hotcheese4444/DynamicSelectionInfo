@@ -1,5 +1,5 @@
 name = "DynamicSelectionInfo"
-version = 1
+version = 2
 copyright = ""
 description = [[
 Fork of Nugget's selection info with dynamic scaling and columns based on what units are selected.
