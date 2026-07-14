@@ -150,11 +150,65 @@ function Main(isReplay)
     local function WeaponDPS(w)
         local dmg = w.Damage or 0
         if dmg <= 0 then return 0 end
+
         local rof = w.RateOfFire or 1
         if rof <= 0 then rof = 1 end
-        local salvo = w.MuzzleSalvoSize or 1
-        local proj  = w.ProjectilesPerOnFire or 1
-        return dmg * salvo * proj * rof
+
+        -- Match FA's weapon-detail calculation. MuzzleSalvoSize is the number
+        -- of projectiles in a delayed muzzle salvo; ProjectilesPerOnFire is
+        -- not an additional multiplier for these weapons. A full firing cycle
+        -- also includes the muzzle delays, charge time, and salvo reload time.
+        local function RoundToTick(t)
+            if t <= 0 then return 0 end
+            return math.max(0.1, math.floor(t * 10 + 0.5) / 10)
+        end
+
+        local cooldown = RoundToTick(1 / rof)
+        local charge = RoundToTick(w.RackSalvoChargeTime or 0)
+        local reload = RoundToTick(w.RackSalvoReloadTime or 0)
+        local muzzleDelay = RoundToTick(w.MuzzleSalvoDelay or 0)
+        local muzzleChargeDelay = RoundToTick(w.MuzzleChargeDelay or 0)
+        local perMuzzleDelay = muzzleDelay + muzzleChargeDelay
+        local racks = w.RackBones or {}
+        local rackCount = table.getn(racks)
+        if rackCount == 0 then rackCount = 1 end
+
+        local cycleProjectiles = 0
+        local cycleTime = 0
+        local subCycleTime = 0
+        for ri = 1, rackCount do
+            local rack = racks[ri] or {}
+            local muzzleBones = rack.MuzzleBones or {}
+            local muzzleCount
+            if (w.MuzzleSalvoDelay or 0) == 0 then
+                muzzleCount = table.getn(muzzleBones)
+            else
+                muzzleCount = w.MuzzleSalvoSize or 1
+            end
+            if muzzleCount < 1 then muzzleCount = 1 end
+
+            cycleProjectiles = cycleProjectiles + muzzleCount
+            subCycleTime = subCycleTime + muzzleCount * perMuzzleDelay
+
+            if not w.RackFireTogether and ri ~= rackCount then
+                if cooldown <= subCycleTime + charge then
+                    cycleTime = cycleTime + subCycleTime + charge
+                        + math.max(0.1, cooldown - subCycleTime - charge)
+                else
+                    cycleTime = cycleTime + cooldown
+                end
+                subCycleTime = 0
+            end
+        end
+
+        if cooldown <= subCycleTime + charge + reload then
+            cycleTime = cycleTime + subCycleTime + charge + reload
+                + math.max(0.1, cooldown - subCycleTime - charge - reload)
+        else
+            cycleTime = cycleTime + cooldown
+        end
+
+        return math.floor(dmg * cycleProjectiles / cycleTime + 0.5)
     end
 
     local function WeaponCounts(w)
